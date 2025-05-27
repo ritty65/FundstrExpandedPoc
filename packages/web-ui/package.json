@@ -1,13 +1,16 @@
 {
-  "name": "@yourname/scheduler-web-ui",
+  "name": "@ritty65/scheduler-web-ui",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.11.0"
+  "devDependencies": {
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "vite": "^6.3.5"
+  }
 }

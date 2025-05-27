@@ -1,10 +1,16 @@
 {
-  "name": "@yourname/scheduler-core",
+  "name": "@yourname/scheduler-service",
   "version": "1.0.0",
   "description": "*\"The Patreon of Nostr — recurring, non‑custodial donations powered by Cashu e‑cash and Nostr relays.*\"",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --build",
+    "dev": "nodemon --watch src --exec ts-node src/index.ts",
+    "dev:service": "pnpm --filter @yourname/scheduler-service dev",
+    "dev:web": "pnpm --filter @yourname/scheduler-web-ui dev",
+    "lint": "eslint . --ext .ts,.tsx,.js",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
