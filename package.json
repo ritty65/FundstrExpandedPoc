@@ -1,0 +1,21 @@
+{
+  "name": "@yourname/scheduler-core",
+  "version": "1.0.0",
+  "description": "*\"The Patreon of Nostr — recurring, non‑custodial donations powered by Cashu e‑cash and Nostr relays.*\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": "true",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "ajv": "^8.17.1",
+    "typescript": "^5.8.3"
+  }
+}
