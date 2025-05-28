@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   generateSecretKey,
   getPublicKey,
   nip19,
 } from 'nostr-tools';
 
-const SchedulerIdentity: React.FC = () => {
+type SchedulerIdentityProps = {
+  onIdentityChanged?: (sk: Uint8Array, nsec: string, pk: string) => void;
+};
+
+const SchedulerIdentity: React.FC<SchedulerIdentityProps> = ({ onIdentityChanged }) => {
   const [nsec, setNsec] = useState<string | null>(null);
   const [npub, setNpub] = useState<string | null>(null);
   const [inputNsec, setInputNsec] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [skBytes, setSkBytes] = useState<Uint8Array | null>(null);
+  const [pkHex, setPkHex] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (skBytes && nsec && pkHex && onIdentityChanged) {
+      onIdentityChanged(skBytes, nsec, pkHex);
+    }
+    // eslint-disable-next-line
+  }, [skBytes, nsec, pkHex]);
 
   const handleGenerate = () => {
     try {
       setError(null);
-      const skBytes = generateSecretKey(); // Uint8Array
-      const pkHex = getPublicKey(skBytes);
-      const nsecVal = nip19.nsecEncode(skBytes);
-      const npubVal = nip19.npubEncode(pkHex);
+      const sk = generateSecretKey();
+      const pk = getPublicKey(sk);
+      const nsecVal = nip19.nsecEncode(sk);
+      const npubVal = nip19.npubEncode(pk);
+      setSkBytes(sk);
+      setPkHex(pk);
       setNsec(nsecVal);
       setNpub(npubVal);
     } catch (e: any) {
@@ -30,13 +45,17 @@ const SchedulerIdentity: React.FC = () => {
     try {
       const d = nip19.decode(inputNsec.trim());
       if (d.type !== 'nsec') throw new Error('Not a valid nsec');
-      const pkHex = getPublicKey(d.data);
+      const pk = getPublicKey(d.data);
+      setSkBytes(d.data);
+      setPkHex(pk);
       setNsec(nip19.nsecEncode(d.data));
-      setNpub(nip19.npubEncode(pkHex));
+      setNpub(nip19.npubEncode(pk));
     } catch (e: any) {
       setError('Invalid nsec: ' + (e.message || e));
       setNsec(null);
       setNpub(null);
+      setSkBytes(null);
+      setPkHex(null);
     }
   };
 
