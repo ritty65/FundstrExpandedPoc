@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { nip19, SimplePool } from "nostr-tools";
 
+const AVATAR_PLACEHOLDER = "https://placehold.co/48x48/e2e8f0/cbd5e1?text=?";
 const RELAYS = [
   "wss://relay.damus.io",
   "wss://relay.primal.net",
@@ -11,11 +12,13 @@ const RELAYS = [
   "wss://relay.snort.social"
 ];
 
-const AVATAR_PLACEHOLDER = "https://placehold.co/48x48/e2e8f0/cbd5e1?text=?";
-
 type RecipientDetailsProps = {
-  onRecipientValid?: (pubkeyHex: string) => void; // For parent to receive pubkey
+  onRecipientValid?: (pubkeyHex: string) => void;
 };
+
+function isHexKey(input: string): boolean {
+  return /^[0-9A-Fa-f]{64}$/.test(input);
+}
 
 const RecipientDetails: React.FC<RecipientDetailsProps> = ({ onRecipientValid }) => {
   const [input, setInput] = useState("");
@@ -29,20 +32,21 @@ const RecipientDetails: React.FC<RecipientDetailsProps> = ({ onRecipientValid })
     setName("N/A");
     setAvatar(AVATAR_PLACEHOLDER);
 
-    let pubkey: string;
-    // Validate input as npub or hex
+    let pubkey: string = "";
     try {
       if (input.startsWith("npub1")) {
         const d = nip19.decode(input);
-        if (d.type !== "npub") throw new Error("Not an npub");
+        if (d.type !== "npub" || !d.data) {
+          throw new Error("Not a valid npub");
+        }
         pubkey = d.data;
-      } else if (/^[0-9A-Fa-f]{64}$/.test(input)) {
+      } else if (isHexKey(input)) {
         pubkey = input;
       } else {
         throw new Error("Invalid pubkey or npub format");
       }
     } catch (e: any) {
-      setError("Invalid key: " + (e.message || e));
+      setError("Invalid recipient key: " + (e.message || e));
       return;
     }
 
