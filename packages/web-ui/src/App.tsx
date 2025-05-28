@@ -1,10 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
+import SchedulerIdentity from './SchedulerIdentity';
+import RecipientDetails from './RecipientDetails';
 
-export default function App() {
+function App() {
+  // This state will store the validated recipient pubkey
+  const [recipientPubkey, setRecipientPubkey] = useState<string | null>(null);
+
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
-      <h1>Scheduler Web UI</h1>
-      <p>Your React app is running!</p>
+    <div>
+      <SchedulerIdentity />
+      <RecipientDetails onRecipientValid={setRecipientPubkey} />
+      {/* Other sections can use recipientPubkey as needed */}
     </div>
   );
 }
+
+export default App;
