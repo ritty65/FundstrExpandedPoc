@@ -69,44 +69,37 @@ const RecipientDetails: React.FC<RecipientDetailsProps> = ({ onRecipientValid })
   };
 
   return (
-    <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50 max-w-xl mx-auto">
-      <h2 className="text-lg font-semibold text-gray-700 mb-3">Recipient Details</h2>
-      <div className="flex flex-col sm:flex-row gap-2 mb-3">
+    <div className="card">
+      <h2 className="section-title">Recipient Details</h2>
+      <div className="flex-row" style={{marginBottom:"1.2rem"}}>
         <input
+          className="input"
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Recipient npub or hex pubkey"
-          className="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           disabled={loading}
         />
         <button
+          className="btn btn-secondary"
           onClick={handleSearch}
           disabled={loading || input.length === 0}
-          className="bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center"
         >
-          {loading ? (
-            <>
-              <span>Searching…</span>
-              <span className="ml-2 animate-spin">🔄</span>
-            </>
-          ) : (
-            "Search Metadata"
-          )}
+          {loading ? <>Searching...</> : <>Search Metadata</>}
         </button>
       </div>
-      <div className="flex items-center space-x-3 text-gray-700">
+      <div className="flex-row" style={{marginBottom:"0.8rem"}}>
         <img
+          className="avatar"
           src={avatar}
           alt="Recipient Avatar"
-          className="w-12 h-12 rounded-full bg-gray-200"
           onError={e => (e.currentTarget.src = AVATAR_PLACEHOLDER)}
         />
         <div>
           <strong>Name:</strong> <span>{name}</span>
         </div>
       </div>
-      {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+      {error && <div className="error-text">{error}</div>}
     </div>
   );
 };

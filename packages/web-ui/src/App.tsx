@@ -2,20 +2,38 @@ import React, { useState } from 'react';
 import SchedulerIdentity from './SchedulerIdentity';
 import RecipientDetails from './RecipientDetails';
 import DonationDetails from './DonationDetails';
-import { nip19 } from 'nostr-tools';
 
-const RELAYS = [
-  "wss://relay.damus.io",
-  "wss://relay.primal.net",
-  "wss://nos.lol",
-  "wss://relay.nostr.band",
-  "wss://nostr.wine",
-  "wss://purplepag.es",
-  "wss://relay.snort.social"
-];
+function AppHeader() {
+  const [dark, setDark] = React.useState(() => {
+    const fromStorage = localStorage.getItem('theme-dark');
+    return fromStorage ? fromStorage === "true" : false;
+  });
+
+  React.useEffect(() => {
+    if (dark) {
+      document.body.classList.add('dark');
+      localStorage.setItem('theme-dark', 'true');
+    } else {
+      document.body.classList.remove('dark');
+      localStorage.setItem('theme-dark', 'false');
+    }
+  }, [dark]);
+
+  return (
+    <div style={{ width: '100%' }}>
+      <button
+        className="theme-toggle-btn"
+        onClick={() => setDark((d) => !d)}
+        title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+      >
+        {dark ? '🌙 Dark Mode' : '☀️ Light Mode'}
+      </button>
+      <div className="app-header">Fundstr Scheduler</div>
+    </div>
+  );
+}
 
 function App() {
-  // --- State ---
   const [schedulerSk, setSchedulerSk] = useState<Uint8Array | null>(null);
   const [schedulerNsec, setSchedulerNsec] = useState<string | null>(null);
   const [schedulerPk, setSchedulerPk] = useState<string | null>(null);
@@ -24,7 +42,6 @@ function App() {
   const [scheduleDisabled, setScheduleDisabled] = useState(false);
   const [scheduleAttempts, setScheduleAttempts] = useState<number[]>([]);
 
-  // --- Handlers for subcomponents to lift state up ---
   function handleIdentityChanged(sk: Uint8Array, nsec: string, pk: string) {
     setSchedulerSk(sk);
     setSchedulerNsec(nsec);
@@ -41,7 +58,6 @@ function App() {
     setLog(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`].slice(-50));
   }
 
-  // --- Central validation helpers ---
   function isValidHexKey(key: string) {
     return /^[0-9A-Fa-f]{64}$/.test(key);
   }
@@ -49,7 +65,6 @@ function App() {
     return key.startsWith('npub1') && key.length === 63;
   }
 
-  // --- Scheduling logic with validation ---
   async function handleSchedule(token: string, delayMinutes: number) {
     const now = Date.now();
     const attempts = scheduleAttempts.filter(t => now - t < 10 * 60 * 1000);
@@ -59,19 +74,14 @@ function App() {
     }
     setScheduleAttempts([...attempts, now]);
 
-    // Key validation: scheduler and recipient must be present
     if (!schedulerPk || !recipientPubkey) {
       addLog("Scheduler or recipient pubkey missing.");
       return;
     }
-
-    // No self-donations
     if (schedulerPk === recipientPubkey) {
       addLog("You cannot send a donation to yourself.");
       return;
     }
-
-    // Validate both are 64-char hex keys or valid npub1
     if (!isValidHexKey(schedulerPk) && !isValidNpub(schedulerPk)) {
       addLog("Invalid scheduler pubkey.");
       return;
@@ -83,28 +93,20 @@ function App() {
 
     setScheduleDisabled(true);
 
-    // Proceed with the rest of your scheduling code
-    // For demo, just log success
     addLog("Scheduling request accepted (passed all validations).");
-    // ... Insert your existing scheduling logic here ...
-    setTimeout(() => setScheduleDisabled(false), 3000); // Simulate operation
+    // ... Insert your real scheduling logic here ...
+    setTimeout(() => setScheduleDisabled(false), 3000);
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
-        <SchedulerIdentity
-          onIdentityChanged={handleIdentityChanged}
-        />
-        <RecipientDetails
-          onRecipientValid={handleRecipient}
-        />
-        <DonationDetails
-          onReadyToSchedule={handleSchedule}
-          scheduleDisabled={scheduleDisabled}
-        />
-        <div className="mt-6 p-4 bg-black text-white text-xs rounded-lg h-40 overflow-y-auto font-mono">
-          <div className="font-bold mb-1 text-gray-300">Log:</div>
+    <div className="app-container">
+      <div className="column-center">
+        <AppHeader />
+        <SchedulerIdentity onIdentityChanged={handleIdentityChanged} />
+        <RecipientDetails onRecipientValid={handleRecipient} />
+        <DonationDetails onReadyToSchedule={handleSchedule} scheduleDisabled={scheduleDisabled} />
+        <div className="card log-box" style={{marginTop: "0.2rem"}}>
+          <div style={{ fontWeight: 700, marginBottom: "0.5rem", color: "#b6bccd" }}>Log:</div>
           {log.map((l, i) => <div key={i}>{l}</div>)}
         </div>
       </div>

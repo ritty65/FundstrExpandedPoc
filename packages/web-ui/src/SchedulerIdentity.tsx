@@ -21,8 +21,7 @@ const SchedulerIdentity: React.FC<SchedulerIdentityProps> = ({ onIdentityChanged
     if (skBytes && nsec && pkHex && onIdentityChanged) {
       onIdentityChanged(skBytes, nsec, pkHex);
     }
-    // eslint-disable-next-line
-  }, [skBytes, nsec, pkHex]);
+  }, [skBytes, nsec, pkHex, onIdentityChanged]);
 
   const handleGenerate = () => {
     try {
@@ -60,37 +59,27 @@ const SchedulerIdentity: React.FC<SchedulerIdentityProps> = ({ onIdentityChanged
   };
 
   return (
-    <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50 max-w-xl mx-auto">
-      <h2 className="text-lg font-semibold text-gray-700 mb-3">Scheduler Identity</h2>
-      <button
-        onClick={handleGenerate}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg mb-3"
-      >
-        Generate New Scheduler Keys
-      </button>
-      <div className="mb-3">
-        <input
-          type="text"
-          value={inputNsec}
-          onChange={e => setInputNsec(e.target.value)}
-          placeholder="Or paste existing nsec and click Load"
-          className={`w-full p-2 border ${error ? 'border-red-400' : 'border-gray-300'} rounded-lg focus:ring-2 focus:ring-blue-500`}
-        />
-      </div>
-      <button
-        onClick={handleLoad}
-        className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg mb-3"
-      >
-        Load Scheduler Nsec
-      </button>
-      {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-      <div className="text-sm">
-        <p className="text-gray-600 break-all"><strong>Active nsec:</strong>
-          <code className="text-red-500 bg-red-50 p-1 rounded">{nsec ?? 'Not set'}</code>
-        </p>
-        <p className="text-gray-600 break-all mt-1"><strong>Active npub:</strong>
-          <code className="text-green-500 bg-green-50 p-1 rounded">{npub ?? 'Not set'}</code>
-        </p>
+    <div className="card">
+      <h2 className="section-title">Scheduler Identity</h2>
+      <button className="btn" onClick={handleGenerate}>🔑 Generate New Scheduler Keys</button>
+      <input
+        className="input"
+        type="text"
+        value={inputNsec}
+        onChange={e => setInputNsec(e.target.value)}
+        placeholder="Or paste existing nsec and click Load"
+      />
+      <button className="btn btn-secondary" onClick={handleLoad}>⬆️ Load Scheduler Nsec</button>
+      {error && <div className="error-text">{error}</div>}
+      <div style={{ fontSize: '0.99rem' }}>
+        <div>
+          <strong style={{ color: "#475569" }}>Active nsec:</strong>{" "}
+          <code style={{ color: "#dc2626", background: "#fee2e2", padding: "2px 4px", borderRadius: "4px" }}>{nsec ?? 'Not set'}</code>
+        </div>
+        <div>
+          <strong style={{ color: "#475569" }}>Active npub:</strong>{" "}
+          <code style={{ color: "#16a34a", background: "#bbf7d0", padding: "2px 4px", borderRadius: "4px" }}>{npub ?? 'Not set'}</code>
+        </div>
       </div>
     </div>
   );

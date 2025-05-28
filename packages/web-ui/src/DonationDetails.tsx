@@ -41,43 +41,43 @@ const DonationDetails: React.FC<DonationDetailsProps> = ({
   }
 
   return (
-    <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50 max-w-xl mx-auto">
-      <h2 className="text-lg font-semibold text-gray-700 mb-3">Donation Details</h2>
-      <div className="mb-3">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Cashu Token:</label>
+    <div className="card">
+      <h2 className="section-title">Donation Details</h2>
+      <div>
+        <label className="label">Cashu Token:</label>
         <textarea
+          className="input"
           value={token}
           onChange={e => setToken(e.target.value)}
           rows={3}
           placeholder="Paste Cashu token here"
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
           maxLength={TOKEN_MAX_LENGTH}
           disabled={scheduleDisabled}
         />
       </div>
-      <div className="flex flex-col sm:flex-row gap-2 items-end">
-        <div className="flex-grow">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Delay (minutes):</label>
+      <div className="flex-row" style={{marginBottom:"0.8rem"}}>
+        <div style={{flexGrow: 1}}>
+          <label className="label">Delay (minutes):</label>
           <input
+            className="input"
             type="number"
             value={delay}
             min={DELAY_MIN}
             max={DELAY_MAX}
             onChange={e => setDelay(Number(e.target.value))}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             disabled={scheduleDisabled}
           />
         </div>
         <button
+          className="btn btn-green"
           onClick={handleSchedule}
-          className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg"
           disabled={scheduleDisabled}
         >
-          Schedule Donation
+          💸 Schedule Donation
         </button>
       </div>
-      {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-      {status && <div className="text-green-600 text-sm mt-2">{status}</div>}
+      {error && <div className="error-text">{error}</div>}
+      {status && <div className="status-text">{status}</div>}
     </div>
   );
 };
